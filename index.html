@@ -1,0 +1,681 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>城市心肺耐力文化跑 - 创新体育课题程</title>
+    <style>
+        /* 基础样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", "微软雅黑", sans-serif;
+        }
+        
+        :root {
+            --primary-blue: #1a6fb0;
+            --secondary-blue: #4a90e2;
+            --accent-gold: #d4af37;
+            --light-bg: #f0f8ff;
+            --dark-text: #333333;
+        }
+        
+        body {
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+            line-height: 1.6;
+            /* 添加背景效果 */
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(26, 111, 176, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(212, 175, 55, 0.05) 0%, transparent 20%);
+            background-size: 50% 100%, 50% 100%;
+            background-position: left top, right bottom;
+            background-repeat: no-repeat;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* 顶部标题栏 */
+        .top-header {
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 10px 0;
+        }
+        
+        .top-header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo-small {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .logo-small img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .logo-text {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-blue);
+        }
+        
+        .task-overview {
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-weight: bold;
+            padding: 8px 15px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .task-overview:hover {
+            background-color: rgba(26, 111, 176, 0.1);
+        }
+        
+        /* 波浪背景效果 */
+        .wave-bg {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .wave {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 260px;
+            background: url('images/wave.png') repeat-x;
+            background-size: 1200px 300px;
+            animation: wave 15s linear infinite;
+        }
+        
+        @keyframes wave {
+            0% { background-position-x: 0; }
+            100% { background-position-x: 1200px; }
+        }
+        
+        /* 头部区域 */
+        header {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            color: white;
+            padding: 180px 0 230px;
+            position: relative;
+            text-align: center;
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .header-icon {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            background-color: white;
+            padding: 8px;
+        }
+        
+        .header-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.4rem;
+            margin-bottom: 25px;
+            font-weight: 300;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background-color: var(--accent-gold);
+            color: #333;
+            padding: 12px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            cursor: pointer;
+            border: none;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        
+        /* 核心创新点 */
+        .features {
+            padding: 80px 0;
+            background-color: white;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+            color: var(--primary-blue);
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: "";
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: var(--accent-gold);
+            margin: 15px auto;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+        
+        .feature-card {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            text-align: center;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            color: var(--primary-blue);
+            margin-bottom: 20px;
+        }
+        
+        .feature-title {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: var(--primary-blue);
+        }
+        
+        /* 情境故事 */
+        .story {
+            padding: 80px 0;
+            background-color: var(--light-bg);
+            position: relative;
+        }
+        
+        .story-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+            font-size: 1.2rem;
+            line-height: 1.8;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .quote {
+            font-style: italic;
+            color: var(--primary-blue);
+            margin: 30px 0;
+            padding: 20px;
+            border-left: 4px solid var(--accent-gold);
+            background: rgba(255,255,255,0.7);
+        }
+        
+        /* 最终章 */
+        .finale {
+            padding: 80px 0;
+            background: linear-gradient(135deg, var(--primary-blue), #2c5282);
+            color: white;
+            text-align: center;
+        }
+        
+        .finale-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        /* 出发按钮区域样式 */
+        .departure-section {
+            padding: 60px 0;
+            background-color: var(--light-bg);
+            text-align: center;
+        }
+        
+        .departure-btn {
+            background-color: var(--accent-gold);
+            color: #333;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .departure-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        
+        /* 模态框样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            position: absolute;
+            right: 15px;
+            top: 10px;
+        }
+        
+        .close:hover {
+            color: var(--dark-text);
+        }
+        
+        .modal-content h3 {
+            margin-bottom: 5px; /* 减少标题与内容之间的间距 */
+            color: var(--primary-blue);
+            text-align: center;
+            padding-right: 30px;
+        }
+        
+        .modal-content p {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .modal-image {
+            width: 100%;
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            margin: 10px 0 15px; /* 调整图片边距 */
+            border-radius: 8px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--dark-text);
+        }
+        
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            background-color: white;
+        }
+        
+        .submit-btn {
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s ease;
+        }
+        
+        .submit-btn:hover {
+            background-color: var(--secondary-blue);
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            /* 移动设备上波浪高度调整 */
+            .wave {
+                height: 150px;
+                background-size: 800px 150px;
+            }
+            
+            header {
+                padding: 120px 0 140px;
+            }
+            
+            .header-icon {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .modal-content {
+                margin: 5% auto;
+                padding: 20px;
+            }
+            
+            .top-header-content {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部标题栏 -->
+    <div class="top-header">
+        <div class="container">
+            <div class="top-header-content">
+                <div class="logo-section">
+                    <div class="logo-small">
+                        <img src="images/title2.jpg" alt="体育·地理">
+                    </div>
+                    <div class="logo-text">体育·地理</div>
+                </div>
+                <a href="html/打卡页.html" class="task-overview">任务一览</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 头部区域 - 使用单层波浪，高度减小但波浪不变 -->
+    <header class="wave-bg">
+        <div class="wave"></div>
+        <div class="container header-content">
+            <!-- 添加图标 -->
+            <div class="header-icon">
+                <img src="images/title.jpg" alt="汕头城市心肺耐力文化跑">
+            </div>
+            <h1>城市跃动跑文脉，体育融科焕新篇</h1>
+            <p class="subtitle">城市心肺耐力文化跑 - 创新体育课程</p>
+            <button class="cta-button" id="locationBtn">选择出发地点</button>
+        </div>
+    </header>
+
+    <!-- 核心创新点 -->
+    <section id="features" class="features">
+        <div class="container">
+            <h2 class="section-title">课程核心创新点</h2>
+            <div class="features-grid">
+                <!-- 删除了潮汐呼吸法卡片 -->
+                <div class="feature-card" data-feature="ar">
+                    <div class="feature-icon">🏃</div>
+                    <h3 class="feature-title">因地制宜型多元运动方法体系构建</h3>
+                    <p>体能文化感知的双重收获</p>
+                </div>
+<div class="feature-card" data-feature="visualization">
+        <div class="feature-icon">📊</div>
+                    <h3 class="feature-title">地理-体育深度融合网站搭建</h3>
+                    <p>街区寻景+馆内探物”为核心设计互动方案。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 情境故事 -->
+    <section class="story">
+        <div class="container">
+            <h2 class="section-title">情境故事导入</h2>
+          <div class="story-content">
+            <p>“您每天生活的这座城市，藏着许多被时光掩埋的故事。</p>
+            <p>今天，您将化身‘城市脉搏的唤醒者’。 </p>
+<div class="quote">
+  <p>“不妨以运动为匙，打开鮀城的文化宝库</p>
+  <p>在礐石山林的步道间探索自然野趣，在小公园骑楼的街巷里触摸商埠记忆</p>
+  <p>在西堤公园的滨海路径上聆听侨批回响，更可在日常口袋公园的漫 </p>
+</div>
+            <p>“当您在各站点完成运动与文化的双重探索，便是以身体感知汕头的地理肌理</p>
+            <p>以行动唤醒城市的文化脉搏，让鮀城的故事因您的参与而愈发生动！”</p>
+          </div>
+        </div>
+    </section>
+
+    <!-- 出发按钮区域 -->
+    <section class="departure-section">
+        <div class="container">
+            <div class="departure-content">
+                <a href="html/汕头.html" class="departure-btn">开始出发！</a>
+            </div>
+        </div>
+    </section>
+    <!-- 定位选择模态框 -->
+    <div id="locationModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>选择出发地点</h3>
+            <form id="locationForm">
+                <div class="form-group">
+                    <label for="province">省:</label>
+                    <select id="province" name="province">
+                        <option value="广东省" selected>广东省</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="city">市:</label>
+                    <select id="city" name="city">
+                        <option value="汕头市" selected>汕头市</option>
+                    </select>
+                </div>
+                <button type="submit" class="submit-btn">出发！</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 创新点详情模态框 -->
+    <div id="featureModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3 id="featureModalTitle">因地制宜型多元运动方法体系构建</h3>
+            <div id="featureModalContent">
+                <!-- 内容将通过JavaScript动态添加 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 模态框功能
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取元素
+            const locationBtn = document.getElementById('locationBtn');
+            const locationModal = document.getElementById('locationModal');
+            const featureModal = document.getElementById('featureModal');
+            const closeBtns = document.querySelectorAll('.close');
+            const locationForm = document.getElementById('locationForm');
+            const featureCards = document.querySelectorAll('.feature-card');
+            
+            // 点击"选择出发地点"按钮打开模态框
+            locationBtn.addEventListener('click', function() {
+                locationModal.style.display = 'block';
+            });
+            
+            // 点击创新点卡片打开详情模态框
+            featureCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const feature = this.getAttribute('data-feature');
+                    showFeatureDetails(feature);
+                });
+            });
+            
+            // 点击关闭按钮关闭模态框
+            closeBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    locationModal.style.display = 'none';
+                    featureModal.style.display = 'none';
+                });
+            });
+            
+            // 点击模态框外部关闭
+            window.addEventListener('click', function(event) {
+                if (event.target === locationModal) {
+                    locationModal.style.display = 'none';
+                }
+                if (event.target === featureModal) {
+                    featureModal.style.display = 'none';
+                }
+            });
+            
+            // 定位表单提交处理
+            locationForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                // 获取选择的省和市
+                const province = document.getElementById('province').value;
+                const city = document.getElementById('city').value;
+                
+                // 关闭模态框
+                locationModal.style.display = 'none';
+                
+                // 向下平滑滚动75像素
+                window.scrollBy({
+                    top: 75,
+                    behavior: 'smooth'
+                });
+            });
+            
+            // 显示创新点详情
+            function showFeatureDetails(feature) {
+                const modalTitle = document.getElementById('featureModalTitle');
+                const modalContent = document.getElementById('featureModalContent');
+                
+                // 根据不同的创新点显示不同的内容
+                let title = '';
+                let content = '';
+                
+                switch(feature) {
+                    case 'ar':
+                        title = '因地制宜型多元运动方法体系构建';
+                        content = `
+                            <div class="modal-image" style="background-image: url('images/cip/ar-example.jpg');"></div>
+                            <p>如紧扣汕头滨海环境的潮汐特性与亚热带季风气候的温润特点，打造 “潮汐呼吸法”—— 运动时以 “潮起（吸气）- 潮落（呼气）” 的节奏适配步伐，平缓运动对应 “平潮” 浅呼吸，进阶运动对应 “涨潮 / 落潮” 深呼吸，让呼吸与地域环境形成自然呼应。</p>
+                            <p>还包括“岩阶踏法”（针对礐石山地貌，设计全脚掌着地、小步幅攀升的登山技巧）、“骑楼步频调节法”（贴合骑楼柱廊间距，调整漫步步频以适配街区景观节奏）、“侨批节奏跑”（模拟侨胞往来脉络，设计快慢交替的间歇跑模式）等。</p>
+                        `;
+                        break;
+                    case 'visualization':
+                        title = '“地理+体育”深度融合专属网站搭建';
+                        content = `
+                            <div class="modal-image" style="background-image: url('images/cip/visualization-example.jpg');"></div>
+                            <p>打造一体化专属网站，实现地理信息、体育方案与地域文化的深度融合。</p>
+                            <p>网站核心板块包括“地域运动方法库”（详细展示各类创新运动方法的动作要领、适配场景与数据支撑）、“地标运动规划师”（标注四大地点的地理特征、地形数据，提供定制化运动路线规划）、“年龄适配方案区”（按年龄段分类呈现运动强度、时长、频率建议）、“地理文化知识库”（同步运动点位的地理成因、文化背景），实现“地理认知-运动规划-文化了解”的一站式服务。让参与者在选择运动方案前，直观掌握场地地理信息（如礐石山坡度分布、骑楼街区路线长度），使运动规划更贴合实际；同时通过运动与地理、文化的联动，让地域认知在运动实践中自然深化，提升参与的沉浸感与获得感。</p>
+                        `;
+                        break;
+                }
+                
+                modalTitle.textContent = title;
+                modalContent.innerHTML = content;
+                featureModal.style.display = 'block';
+            }
+            
+            // 简单的滚动动画效果
+            // 平滑滚动到锚点
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+            
+            // 卡片动画效果
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+            
+            const observer = new IntersectionObserver(function(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = 1;
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+            
+            // 为所有卡片添加初始样式和观察
+            document.querySelectorAll('.feature-card').forEach(card => {
+                card.style.opacity = 0;
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                observer.observe(card);
+            });
+        });
+    </script>
+</body>
+</html>
