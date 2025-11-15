@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>终章 · 城市脉搏的唤醒者</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", "微软雅黑", sans-serif;
+        }
+        
+        :root {
+            --primary-blue: #1a6fb0;
+            --secondary-blue: #4a90e2;
+            --accent-gold: #d4af37;
+            --light-bg: #f0f8ff;
+            --dark-text: #333333;
+        }
+        
+        body {
+            background: url('../images/background.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: white;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+        }
+        
+        /* 添加半透明遮罩层，提高文字可读性 */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            z-index: -1;
+        }
+        
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            color: var(--dark-text);
+            margin: 20px;
+        }
+        
+        /* 头部样式 */
+        .header {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+            color: white;
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            color: white;
+        }
+        
+        /* 内容区域 */
+        .content {
+            padding: 40px 30px;
+        }
+        
+        .story-section {
+            margin-bottom: 40px;
+        }
+        
+        .story-title {
+            font-size: 1.8rem;
+            color: var(--primary-blue);
+            margin-bottom: 20px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .story-title::after {
+            content: "";
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: var(--accent-gold);
+            margin: 10px auto;
+        }
+        
+        .story-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+        
+        .quote {
+            font-style: italic;
+            padding: 20px;
+            margin: 25px 0;
+            background-color: rgba(26, 111, 176, 0.1);
+            border-left: 4px solid var(--accent-gold);
+            border-radius: 0 8px 8px 0;
+        }
+        
+        /* 分享区域 */
+        .share-section {
+            background-color: rgba(240, 248, 255, 0.8);
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .share-title {
+            font-size: 1.5rem;
+            color: var(--primary-blue);
+            margin-bottom: 20px;
+        }
+        
+        .share-description {
+            margin-bottom: 25px;
+            color: #555;
+        }
+        
+        .share-box {
+            display: flex;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .url-input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 5px 0 0 5px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        .url-input:focus {
+            border-color: var(--primary-blue);
+        }
+        
+        .copy-btn {
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .copy-btn:hover {
+            background-color: var(--secondary-blue);
+        }
+        
+        .success-message {
+            margin-top: 15px;
+            color: #2ecc71;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .success-message.show {
+            opacity: 1;
+        }
+        
+        /* 底部导航 */
+        .footer-nav {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        .nav-btn {
+            display: inline-block;
+            background-color: var(--primary-blue);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .nav-btn:hover {
+            background-color: var(--secondary-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .story-title {
+                font-size: 1.5rem;
+            }
+            
+            .share-box {
+                flex-direction: column;
+            }
+            
+            .url-input {
+                border-radius: 5px;
+                margin-bottom: 10px;
+            }
+            
+            .copy-btn {
+                border-radius: 5px;
+            }
+            
+            .footer-nav {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-btn {
+                text-align: center;
+            }
+        }
+        
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.8s ease forwards;
+        }
+        
+        .delay-1 { animation-delay: 0.2s; opacity: 0; }
+        .delay-2 { animation-delay: 0.4s; opacity: 0; }
+        .delay-3 { animation-delay: 0.6s; opacity: 0; }
+    </style>
+</head>
+<body>
+    <div class="container fade-in">
+        <div class="header">
+            <h1>终章 · 城市脉搏的唤醒者</h1>
+            <p>文化典籍已重连，城市脉搏再跳动</p>
+        </div>
+        
+        <div class="content">
+            <div class="story-section">
+                <h2 class="story-title fade-in delay-1">情境故事导入</h2>
+                <div class="story-content fade-in delay-1">
+                    <p>"同学们，我们每天生活的这座城市，藏着许多被时光掩埋的故事。今天，你们将化身'城市脉搏的唤醒者'。"</p>
+                </div>
+                
+                <div class="quote fade-in delay-2"> “不妨以运动为匙，打开鮀城的文化宝库——在礐石山林的步道间探索自然野趣，在小公园骑楼的街巷里触摸商埠记忆，在西堤公园的滨海路径上聆听侨批回响，更可在日常口袋公园的漫 </div>
+                
+                <div class="story-content fade-in delay-3">
+                  <p> “当您在各站点完成运动与文化的双重探索，便是以身体感知汕头的地理肌理 以行动唤醒城市的文化脉搏，让鮀城的故事因您的参与而愈发生动！” </p>
+                </div>
+            </div>
+            
+            <div class="share-section fade-in delay-3">
+                <h3 class="share-title">分享旅程</h3>
+                <p class="share-description">将这段独特的城市探索之旅分享给更多人，一起唤醒城市的记忆脉搏</p>
+                
+                <div class="share-box">
+                    <input type="text" class="url-input" id="pageUrl" value="https://example.com/shantou-cultural-run" readonly>
+                    <button class="copy-btn" id="copyBtn">复制链接</button>
+                </div>
+                
+                <div class="success-message" id="successMessage">链接已复制到剪贴板！</div>
+            </div>
+            
+            <div class="footer-nav">
+                <a href="../index.html" class="nav-btn">返回主页</a>
+                <a href="打卡页.html" class="nav-btn">前往打卡页</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取当前页面URL
+            const pageUrl = window.location.href;
+            document.getElementById('pageUrl').value = pageUrl;
+            
+            // 复制功能
+            const copyBtn = document.getElementById('copyBtn');
+            const successMessage = document.getElementById('successMessage');
+            
+            copyBtn.addEventListener('click', function() {
+                const urlInput = document.getElementById('pageUrl');
+                urlInput.select();
+                urlInput.setSelectionRange(0, 99999); // 对于移动设备
+                
+                try {
+                    // 使用现代 Clipboard API
+                    navigator.clipboard.writeText(urlInput.value).then(function() {
+                        // 显示成功消息
+                        successMessage.classList.add('show');
+                        setTimeout(function() {
+                            successMessage.classList.remove('show');
+                        }, 3000);
+                    });
+                } catch (err) {
+                    // 降级方案
+                    document.execCommand('copy');
+                    successMessage.classList.add('show');
+                    setTimeout(function() {
+                        successMessage.classList.remove('show');
+                    }, 3000);
+                }
+            });
+            
+            // 添加滚动动画
+            const fadeElements = document.querySelectorAll('.fade-in');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animationPlayState = 'running';
+                        observer.unobserve(entry.target);
+                    }
+                });
+            });
+            
+            fadeElements.forEach(element => {
+                observer.observe(element);
+            });
+        });
+    </script>
+</body>
+</html>

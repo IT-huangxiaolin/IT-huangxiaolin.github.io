@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人文地点·西堤公园 </title>
+    <style>
+        /* 原有样式保持不变 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", "微软雅黑", sans-serif;
+        }
+        
+        :root {
+            --primary-blue: #1a6fb0;
+            --secondary-blue: #4a90e2;
+            --accent-gold: #d4af37;
+            --light-bg: #f0f8ff;
+            --dark-text: #333333;
+            --success-green: #28a745;
+        }
+        
+        body {
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* 修复导航按钮布局 */
+        .nav-btn-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            /* 移除 pointer-events: none; 允许点击 */
+        }
+        
+        .nav-btn-group {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .nav-btn {
+            display: inline-block;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: var(--primary-blue);
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border: 1px solid rgba(26, 111, 176, 0.2);
+            cursor: pointer; /* 确保鼠标指针正确显示 */
+        }
+        
+        .nav-btn:hover {
+            background-color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        /* 新增：回到主页按钮样式 */
+        .home-btn {
+            background-color: var(--primary-blue);
+            color: white;
+            border: 1px solid var(--primary-blue);
+        }
+        
+        .home-btn:hover {
+            background-color: var(--secondary-blue);
+            color: white;
+            border-color: var(--secondary-blue);
+        }
+        
+        /* 顶部图片区域 */
+        .hero-section {
+            position: relative;
+            margin-top: 80px;
+        }
+        
+        .hero-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .hero-title {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            color: white;
+            padding: 30px;
+            border-radius: 0 0 10px 10px;
+        }
+        
+        .hero-title h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        /* 内容区域 */
+        .content-section {
+            padding: 60px 0;
+        }
+        
+        /* 修改后的选项卡样式 - 垂直侧边栏布局 */
+        .tabs-container {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .tabs {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 250px;
+            flex-shrink: 0;
+        }
+        
+        .tab {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 18px 20px;
+            background: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            color: var(--dark-text);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            text-align: left;
+        }
+        
+        .tab:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .tab.active {
+            background: var(--primary-blue);
+            color: white;
+            box-shadow: 0 5px 15px rgba(26, 111, 176, 0.3);
+        }
+        
+        .tab-icon {
+            font-size: 1.4rem;
+            width: 30px;
+            text-align: center;
+        }
+        
+        .tab-content {
+            display: none;
+            flex: 1;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* 内容卡片 */
+        .content-card {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+        
+        .content-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--primary-blue);
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .content-title::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: var(--accent-gold);
+        }
+        
+        /* 媒体元素 */
+        .media-container {
+            margin-top: 30px;
+        }
+        
+        .video-player, .audio-player {
+            width: 100%;
+            max-width: 600px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .audio-player {
+            background: #f5f5f5;
+            padding: 15px;
+        }
+        
+        /* 任务区域样式 - 新增 */
+        .task-section {
+            padding: 40px 0 80px;
+            background: linear-gradient(to bottom, var(--light-bg) 0%, #e6f2ff 100%);
+        }
+        
+        .section-title {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: var(--primary-blue);
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--accent-gold);
+            border-radius: 2px;
+        }
+        
+        .task-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 50px;
+        }
+        
+        .detail-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .detail-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--accent-gold);
+        }
+        
+        .detail-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+        }
+        
+        .detail-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: var(--primary-blue);
+            display: flex;
+            align-items: center;
+        }
+        
+        .detail-card h3::before {
+            content: "•";
+            color: var(--accent-gold);
+            font-size: 1.8rem;
+            margin-right: 10px;
+        }
+        
+        .detail-card p {
+            color: #555;
+            line-height: 1.7;
+        }
+        
+        /* 侨批引用文字样式 */
+        .quote-text {
+            background-color: rgba(26, 111, 176, 0.1);
+            padding: 20px;
+            border-left: 4px solid var(--accent-gold);
+            margin-top: 15px;
+            border-radius: 0 8px 8px 0;
+            font-style: italic;
+            color: #444;
+            line-height: 1.8;
+        }
+        
+        .quote-text p {
+            margin-bottom: 10px;
+        }
+        
+        .quote-text p:last-child {
+            margin-bottom: 0;
+            text-align: right;
+            color: var(--primary-blue);
+            font-weight: 500;
+        }
+        
+        .checkin-section {
+            background: white;
+            border-radius: 12px;
+            padding: 35px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            margin-top: 20px;
+        }
+        
+        .checkin-title {
+            font-size: 1.5rem;
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--primary-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .checkin-title::before {
+            content: "🏆";
+            margin-right: 10px;
+            font-size: 1.8rem;
+        }
+        
+        .checkin-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+        
+        .qr-checkin, .manual-checkin {
+            padding: 20px;
+            border-radius: 10px;
+            background: #f9f9f9;
+        }
+        
+        .qr-checkin h4, .manual-checkin h4 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: var(--primary-blue);
+            text-align: center;
+        }
+        
+        .qr-code {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+        
+        .qr-code img {
+            max-width: 200px;
+            height: auto;
+        }
+        
+        .checkin-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group label {
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .form-group input, .form-group select {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--secondary-blue);
+            box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+        }
+        
+        .checkin-btn {
+            background: linear-gradient(to right, var(--primary-blue), var(--secondary-blue));
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+        
+        .checkin-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(26, 111, 176, 0.3);
+        }
+        
+        /* 音频录制提示 */
+        .audio-hint {
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px dashed var(--accent-gold);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .audio-hint p {
+            margin-bottom: 8px;
+        }
+        
+        .audio-hint ul {
+            padding-left: 20px;
+        }
+        
+        .audio-hint li {
+            margin-bottom: 5px;
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .nav-btn-container {
+                padding: 10px 15px;
+            }
+            
+            .nav-btn {
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+            
+            .hero-title h1 {
+                font-size: 1.8rem;
+            }
+            
+            /* 移动设备上的垂直选项卡布局调整 */
+            .tabs-container {
+                flex-direction: column;
+            }
+            
+            .tabs {
+                flex-direction: row;
+                width: 100%;
+                overflow-x: auto;
+                padding-bottom: 10px;
+            }
+            
+            .tab {
+                min-width: 150px;
+                flex-direction: column;
+                gap: 8px;
+                padding: 15px;
+                text-align: center;
+            }
+            
+            .tab-icon {
+                font-size: 1.2rem;
+            }
+            
+            .content-card {
+                padding: 20px;
+            }
+            
+            .task-details {
+                grid-template-columns: 1fr;
+            }
+            
+            .checkin-options {
+                grid-template-columns: 1fr;
+            }
+            
+            .section-title {
+                font-size: 1.7rem;
+            }
+            
+            .checkin-section {
+                padding: 25px;
+            }
+        }
+    .audio-player1 {            width: 100%;
+            max-width: 600px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+    </style>
+</head>
+<body>
+    <!-- 修复导航按钮布局 -->
+    <div class="nav-btn-container">
+        <div class="nav-btn-group">
+            <a href="1.html" class="nav-btn">← 上一站</a>
+            <a href="汕头.html" class="nav-btn home-btn">回到主页</a>
+        </div>
+        <div class="nav-btn-group">
+            <a href="3.html" class="nav-btn">下一站 →</a>
+        </div>
+    </div>
+    
+    <!-- 顶部图片区域 -->
+    <section class="hero-section">
+        <div class="container">
+            <img src="../images/1/2.jpg" alt="西堤公园" class="hero-image">
+            <div class="hero-title">
+                <h1>（侨乡文化与红色记忆融合站点）西堤公园</h1>
+                <p>感受"侨批文化 + 红色记忆"的信念，通过持续慢跑培养耐力与毅力。</p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 内容区域 -->
+    <section class="content-section">
+        <div class="container">
+            <!-- 修改后的选项卡容器 -->
+            <div class="tabs-container">
+                <!-- 垂直选项卡 -->
+                <div class="tabs">
+                    <button class="tab active" data-tab="sports">
+                        <span class="tab-icon">🏃</span>
+                        <span>体育</span>
+                    </button>
+                    <button class="tab" data-tab="geography">
+                        <span class="tab-icon">🗺️</span>
+                        <span>地理</span>
+                    </button>
+                </div>
+                
+                <!-- 体育内容 -->
+                <div id="sports" class="tab-content active">
+                    <div class="content-card">
+                      <h2 class="content-title">HIIT 间歇燃脂跑"有氧+无氧"</h2>
+                      <p> &nbsp; &nbsp; &nbsp; &nbsp;文化场景下的多元运动设计结合公园"侨批文化 + 红色记忆"属性，为儿童、青少年、中青年、老年及肥胖体质人群设计"走跑结合、间歇运动"等多元方案。</p>
+                      <p> &nbsp; &nbsp; &nbsp; &nbsp;以下以中青年群体（14-35岁）为例： </p>
+                        <p> &nbsp; &nbsp; &nbsp; &nbsp;采用HIIT 间歇燃脂跑"有氧+无氧"结合的间歇模式，依托公园500米分段步道设计：第一段500米快跑（配速3.5-4分钟/公里，无氧冲刺），第二段500米慢跑（配速5分钟/公里，有氧恢复），第三段500米快跑，第四段500米快走（速度4公里/小时，放松调整），全程2公里。通常15-30分钟即可完成，效果相当于传统慢跑40-60分钟。运动中心率维持140-170次/分钟，单次时长35分钟，短时高效提升燃脂效率与心肺功能。 </p>
+                        <p> &nbsp; &nbsp; &nbsp; &nbsp;本方案将配套西堤公园专属人文故事包，涵盖侨批中的家国情怀、西堤码头的革命往事等内容，供运动前后品读，实现体能锻炼与文化感知的双重收获。​</p>
+                        <div class="media-container">
+                          <h3>运动教学视频</h3>
+                          <video class="video-player" controls>
+                                <source src="../video/2.1.mp4" type="video/mp4">
+                                您的浏览器不支持视频播放。
+                            </video>
+                          <video class="video-player" controls>
+                              <source src="../video/2.2.mp4" type="video/mp4">
+                              您的浏览器不支持视频播放。 </video>
+                        <img src="../images/1/10.png" width="300" height="646" alt=""/>                        </div>
+                    </div>
+                </div>
+                
+                <!-- 地理内容 -->
+                <div id="geography" class="tab-content">
+                    <div class="content-card">
+                        <h2 class="content-title">地理介绍</h2>
+                      <p> &nbsp; &nbsp; &nbsp; &nbsp;西堤公园位于广东省汕头市金平区老市区西南角镇邦路与安平路之间，占地面积5.2万平方米，1991年建成后因礐石大桥建设重新规划，2014年启动修复工程，2016年试开放。</p>
+                      <p> &nbsp; &nbsp; &nbsp; &nbsp;园内保留西南侧原始海岸线，为南粤古驿道出海口纪念地、古代海上丝绸之路节点，见证汕头从渔村到商埠的变迁史。 公园以侨批文化为核心，设有老城旧图广场、下沉式侨批文化景墙及过番纪念柱，其中嵌有500余块侨批瓷砖艺术品，并立有饶宗颐题写的"海邦剩馥"石碑 。2017年免费开放足球场、篮球场等运动场馆，2018年设立潮汕历史文化传播基地并举办文化讲堂。配套海滨木栈道、环形步道及馥园展览馆（建设中），融合侨批档案与左联文化展示功能。 该园获2017年中国人居环境范例奖，截至2016年累计接待游客450万人次，成为汕头老城区改造典范。潮语歌曲《一封番批》作为园内主题歌被广东档案馆永久收藏。</p>
+                      <div class="media-container">
+<h3>语音介绍</h3>
+              <audio class="audio-player" controls>
+                <source src="../audio/2.mp3" type="audio/mp3">
+                您的浏览器不支持音频播放。 </audio>
+              <h3>西堤公园地理介绍视频</h3>
+                            <video class="video-player" controls>
+                                <source src="../video/2.1-geo.mp4" type="video/mp4">
+                                您的浏览器不支持视频播放。
+                            </video>
+                        <video class="video-player" controls>
+                              <source src="../video/2.2-geo.mp4" type="video/mp4">
+                              您的浏览器不支持视频播放。 </video>
+                            <video class="video-player" controls>
+                              <source src="../video/2.3-geo.mp4" type="video/mp4">
+                              您的浏览器不支持视频播放。 </video>
+                      </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 任务区域 -->
+    <section class="task-section">
+        <div class="container">
+            <h2 class="section-title">任务详情</h2>
+            
+            <div class="task-details">
+                <div class="detail-card">
+                    <h3>文化内涵</h3>
+                    <p>侨批是连接海外侨胞与家乡的亲缘纽带，蕴含"爱国、爱乡、爱家人"的深厚情感。</p>
+                </div>
+                
+                <div class="detail-card">
+                    <h3>体育目标</h3>
+                    <p>维持中低强度持续慢跑，培养有氧耐力。</p>
+                </div>
+                
+                <div class="detail-card">
+                    <h3>任务内容</h3>
+                    <p>小组用潮汕方言或普通话齐声朗诵一段经典侨批文字。</p>
+                    <div class="quote-text">
+                        <p>"亲爱的父母亲大人：</p>
+                        <p>儿在海外一切安好，勿念。寄上银元五十，望查收。</p>
+                        <p>愿家中大小平安，身体健康。</p>
+                        <p>不孝儿 敬上"</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="checkin-section">
+                <h3 class="checkin-title">打卡西堤公园</h3>
+                <div class="checkin-options">
+                    <div class="qr-checkin">
+                      <h4>西堤公园·馥园</h4>
+                      <div class="qr-code">
+                            <img src="../images/qr/task2.png" alt="任务二二维码">
+                        </div>
+                    </div>
+                    
+                    <div class="manual-checkin">
+                        <h4>手动录制上传</h4>
+                        <form class="checkin-form">
+                            <div class="form-group">
+                                <label for="audio-upload">上传朗诵音频</label>
+                                <input type="file" id="audio-upload" name="audio" accept="audio/*" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="language">朗诵语言</label>
+                                <select id="language" name="language" required>
+                                    <option value="">请选择语言</option>
+                                    <option value="chaoshan">潮汕方言</option>
+                                    <option value="mandarin">普通话</option>
+                                </select>
+                            </div>
+                            
+                            <div class="audio-hint">
+                                <p><strong>录音提示：</strong></p>
+                                <ul>
+                                    <li>请确保环境安静，减少背景噪音</li>
+                                    <li>朗读时请保持清晰、自然的语速</li>
+                                    <li>建议录音时长控制在30-60秒</li>
+                                    <li>支持MP3、WAV、M4A等常见音频格式</li>
+                                </ul>
+                            </div>
+                            
+                            <button type="submit" class="checkin-btn">上传音频并打卡</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // 选项卡功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // 移除所有选项卡和内容的active类
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(content => content.classList.remove('active'));
+                    
+                    // 为当前选项卡和对应内容添加active类
+                    tab.classList.add('active');
+                    const tabId = tab.getAttribute('data-tab');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+
+            // 打卡表单提交
+            const checkinForm = document.querySelector('.checkin-form');
+            
+            if (checkinForm) {
+                checkinForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const audio = document.getElementById('audio-upload').files[0];
+                    const language = document.getElementById('language').value;
+                    
+                    if (audio && language) {
+                        alert('音频上传成功！已获得打卡西堤公园！');
+                        // 这里可以添加实际的数据存储逻辑
+                    } else {
+                        alert('请完成所有必填项！');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>运动推荐 - 汕头</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", "微软雅黑", sans-serif;
+        }
+        
+        :root {
+            --primary-blue: #1a6fb0;
+            --secondary-blue: #4a90e2;
+            --accent-gold: #d4af37;
+            --light-bg: #f0f8ff;
+            --dark-text: #333333;
+        }
+        
+        body {
+            background-color: white; /* 主体为白色 */
+    color: var(--dark-text);
+    line-height: 1.6;
+    /* 顶部青色渐变 + 底部浅蓝色渐变 */
+    background: 
+        /* 顶部青色渐变 - 高度约10% */
+        linear-gradient(180deg, 
+            rgba(64, 224, 208, 0.8) 0%, 
+            rgba(64, 224, 208, 0.4) 50%,
+            transparent 100%
+        ),
+        /* 底部浅蓝色渐变 - 高度约10% */
+        linear-gradient(0deg, 
+            rgba(173, 216, 230, 0.8) 0%, 
+            rgba(173, 216, 230, 0.4) 50%,
+            transparent 100%
+        ),
+        /* 主体白色背景 */
+        linear-gradient(180deg, white 0%, white 100%);
+    
+    background-size: 100% 10%, 100% 10%, 100% 100%;
+    background-repeat: no-repeat;
+    background-position: top, bottom, center;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* 定位标签 */
+        .location-tag {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+            z-index: 10;
+        }
+        
+        .location-tag i {
+            margin-right: 5px;
+            color: var(--primary-blue);
+        }
+        
+        /* 回到主页按钮 */
+        .home-btn-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .home-btn {
+            display: inline-block;
+            background-color: var(--primary-blue);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        
+        .home-btn:hover {
+            background-color: var(--secondary-blue);
+        }
+        
+        /* 推荐区域 */
+        .recommendation-section {
+            padding: 80px 0 40px;
+            position: relative;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 40px;
+            color: var(--primary-blue);
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: "";
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: var(--accent-gold);
+            margin: 15px auto;
+        }
+        
+        /* 轮播图区域布局 */
+        .carousel-area {
+            display: flex;
+            gap: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        /* 缩略图区域 */
+        .thumbnail-container {
+            width: 120px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .thumbnail {
+            width: 100%;
+            height: 80px;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .thumbnail:hover {
+            opacity: 0.9;
+            transform: scale(1.05);
+        }
+        
+        .thumbnail.active {
+            opacity: 1;
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+        }
+        
+        .thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        /* 轮播图 */
+        .carousel-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .carousel {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+        
+        .carousel-item {
+            min-width: 100%;
+            position: relative;
+        }
+        
+        .carousel-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .carousel-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            color: white;
+            padding: 20px;
+        }
+        
+        .carousel-caption h3 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+        
+        /* 交互式地图区域 */
+        .interactive-map {
+            margin: 60px 0;
+            padding: 30px 0;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+        }
+        
+        .map-container {
+            position: relative;
+            max-width: 900px;
+            margin: 0 auto;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+        
+        .map-background {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .map-marker {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background-color: var(--accent-gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transform: translate(-50%, -50%);
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+            z-index: 5;
+        }
+        
+        .map-marker:hover {
+            transform: translate(-50%, -50%) scale(1.2);
+            background-color: var(--primary-blue);
+        }
+        
+        .map-marker::after {
+            content: "";
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 15px solid var(--accent-gold);
+            bottom: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .map-marker:hover::after {
+            border-top-color: var(--primary-blue);
+        }
+        
+        .map-popup {
+            position: absolute;
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.2);
+            width: 200px;
+            z-index: 20;
+            display: none;
+        }
+        
+        .map-popup h4 {
+            color: var(--primary-blue);
+            margin-bottom: 5px;
+        }
+        
+        .map-popup p {
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+        
+        .map-popup a {
+            display: inline-block;
+            background-color: var(--primary-blue);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.8rem;
+        }
+        
+        .map-popup a:hover {
+            background-color: var(--secondary-blue);
+        }
+        
+        /* 运动分类区域 */
+        .sports-categories {
+            display: flex;
+            gap: 30px;
+            margin-top: 60px;
+        }
+        
+        .featured-sports {
+            flex: 6;
+        }
+        
+        .regular-sports {
+            flex: 4;
+        }
+        
+        .category-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--primary-blue);
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--accent-gold);
+        }
+        
+        .sports-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .sport-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .sport-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .sport-image {
+            height: 150px;
+            background-color: #eee;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .sport-info {
+            padding: 15px;
+        }
+        
+        .sport-name {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+            color: var(--primary-blue);
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .sports-categories {
+                flex-direction: column;
+            }
+            
+            .carousel-image {
+                height: 250px;
+            }
+            
+            .location-tag {
+                position: relative;
+                top: 0;
+                left: 0;
+                margin-bottom: 20px;
+                align-self: flex-start;
+            }
+            
+            .recommendation-section {
+                padding-top: 40px;
+            }
+            
+            .carousel-area {
+                flex-direction: column;
+            }
+            
+            .thumbnail-container {
+                width: 100%;
+                flex-direction: row;
+                order: 2;
+                margin-top: 15px;
+                justify-content: center;
+            }
+            
+            .thumbnail {
+                width: 80px;
+                height: 60px;
+            }
+            
+            .map-marker {
+                width: 30px;
+                height: 30px;
+                font-size: 0.8rem;
+            }
+            
+            .map-popup {
+                width: 160px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 运动推荐页面 -->
+    <section class="recommendation-section">
+        <div class="container">
+            <!-- 定位标签 -->
+            <div class="location-tag">
+                <i>📍</i> 定位：汕头
+            </div>        
+            
+            <!-- 回到主页按钮 -->
+            <div class="home-btn-container">
+                <a href="../index.html" class="home-btn">回到主页</a>
+            </div>
+            
+            <h2 class="section-title">推荐运动景点</h2>
+            
+            <!-- 轮播图区域 -->
+            <div class="carousel-area">
+                <!-- 缩略图区域 -->
+                <div class="thumbnail-container">
+                    <!-- 缩略图1 -->
+                    <div class="thumbnail active" data-index="0">
+                        <img src="../images/tuijian/1.jpg" alt="西堤公园">
+                    </div>
+                    
+                    <!-- 缩略图2 -->
+                    <div class="thumbnail" data-index="1">
+                        <img src="../images/tuijian/2.jpg" alt="礐石风景区">
+                    </div>
+                    
+                    <!-- 缩略图3 -->
+                    <div class="thumbnail" data-index="2">
+                        <img src="../images/tuijian/3.png" alt="东海岸公园">
+                    </div>
+                    
+                    <!-- 缩略图4 -->
+                    <div class="thumbnail" data-index="3">
+                        <img src="../images/tuijian/4.jpg" alt="人民广场">
+                    </div>
+                </div>
+                
+                <!-- 轮播图 -->
+                <div class="carousel-container">
+                    <div class="carousel">
+                        <!-- 轮播项1 -->
+                        <div class="carousel-item">
+                            <a href="1.html">
+                                <img src="../images/tuijian/1.jpg" alt="推荐景点1" class="carousel-image">
+                                <div class="carousel-caption">
+                                    <h3>（自然生态站点）礐石山风景区</h3>
+                                    <p>位于汕头市濠江区的国家4A级旅游景区</p>
+                                </div>
+                            </a>
+                        </div>
+                        
+                        <!-- 轮播项2 -->
+                        <div class="carousel-item">
+                            <a href="2.html">
+                                <img src="../images/tuijian/2.jpg" alt="推荐景点3" class="carousel-image">
+                                <div class="carousel-caption">
+                                    <h3>（侨乡文化与红色记忆融合站点）西堤公园</h3>
+                                    <p>汕头最美的海滨跑步路线。</p>
+                                </div>
+                            </a>
+                        </div>
+                        
+                        <!-- 轮播项3 -->
+                        <div class="carousel-item">
+                            <a href="3.html">
+                                <img src="../images/tuijian/3.png" alt="推荐景点2" class="carousel-image">
+                                <div class="carousel-caption">
+                                    <h3>（侨乡文化与红色记忆融合站点）商埠之芯·小公园中山纪念亭  汕头开埠文化陈列馆</h3>
+                                    <p>穿越骑楼的韵律，体验百载商埠的繁华，传承红色记忆。</p>
+                                </div>
+                            </a>
+                        </div>
+
+						<!-- 轮播项4 -->
+                        <div class="carousel-item">
+                            <a href="4.html">
+                                <img src="../images/tuijian/4.jpg" alt="推荐景点4" class="carousel-image">
+                                <div class="carousel-caption">
+                                    <h3>（青春校园活力站点）汕头市第一中学</h3>
+                                    <p>在日常的生活中体验锻炼。</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 交互式地图区域 -->
+            <div class="interactive-map">
+                <h3 class="section-title">运动地点地图</h3>
+                <div class="map-container">
+                    <img src="../images/map-background.jpg" alt="汕头运动地点地图" class="map-background">
+                  <div class="map-marker" style="left: 75%; top: 45%;" data-index="3"> 人 </div>
+<!-- 地图标记点1 - 西堤公园 -->
+                    <div class="map-marker" style="left: 25%; top: 40%;" data-index="0">
+                        西
+                    </div>
+                    
+                    <!-- 地图标记点2 - 商埠之芯 -->
+                    <div class="map-marker" style="left: 45%; top: 35%;" data-index="1">
+                        商
+                    </div>
+                    
+                    <!-- 地图标记点3 - 侨乡之窗 -->
+                    <div class="map-marker" style="left: 60%; top: 50%;" data-index="2">
+                        侨
+                    </div>
+                    
+                    <!-- 地图标记点4 - 人文之光 -->
+                    
+                    <!-- 地图弹窗 -->
+                    <div class="map-popup" id="map-popup">
+                        <h4 id="popup-title">地点名称</h4>
+                        <p id="popup-desc">地点描述</p>
+                        <a href="#" id="popup-link">查看详情</a>
+                  </div>
+                </div>
+            </div>
+            
+            <!-- 运动分类 -->
+            <div class="sports-categories">
+                <!-- 特色运动 -->
+                <div class="featured-sports">
+                    <h3 class="category-title">特色运动</h3>
+                    <div class="sports-grid">
+                        <!-- 运动项目1 -->
+                        <div class="sport-card">
+                            <div class="sport-image" style="background-color: #a8d5e5;background-image: url('../images/tuijian/5.jpg'); background-size: cover; background-position: center;"></div>
+                            <div class="sport-info">
+                                <h4 class="sport-name">“潮汐呼吸法”</h4>
+                                <p> “潮起（吸气）- 潮落（呼气）”</p>
+                            </div>
+                        </div>
+                        
+                        <!-- 运动项目2 -->
+                        <div class="sport-card">
+                            <div class="sport-image" style="background-color: #a8d5e5;background-image: url('../images/tuijian/6.jpg'); background-size: cover; background-position: center;"></div>
+                            <div class="sport-info">
+                                <h4 class="sport-name">“岩阶踏法”</h4>
+                                <p>礐石山地貌，设计全脚掌着地、小步幅攀升的登山技巧</p>
+                            </div>
+                        </div>
+                        
+                        <!-- 运动项目3 -->
+                        <div class="sport-card">
+                            <div class="sport-image" style="background-color: #a8d5e5;background-image: url('../images/tuijian/7.jpg'); background-size: cover; background-position: center;"></div>
+                            <div class="sport-info">
+                                <h4 class="sport-name">“骑楼步频调节法”</h4>
+                                <p>调整漫步步频以适配街区景观节奏</p>
+                            </div>
+                        </div>
+                        
+                        <!-- 运动项目4 -->
+                        <div class="sport-card">
+                            <div class="sport-image" style="background-color: #a8d5e5;background-image: url('../images/tuijian/8.png'); background-size: cover; background-position: center;"></div>
+                            <div class="sport-info">
+                                <h4 class="sport-name">“侨批节奏跑”</h4>
+                                <p>模拟侨胞往来脉络，设计快慢交替的间歇跑模式</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 常规运动 -->
+                <div class="regular-sports">
+                    <h3 class="category-title">常规运动</h3>
+                    <div class="sports-grid">
+                        <!-- 运动项目1 -->
+                        <div class="sport-card">
+                            <div class="sport-image" style="background-color: #a8d5e5;background-image: url('../images/tuijian/9.jpg'); background-size: cover; background-position: center;"></div>
+                            <div class="sport-info">
+                                <h4 class="sport-name">健身广场</h4>
+                                <p>社区篮球场活动</p>
+                            </div>
+                        </div>
+                        
+                        <!-- 运动项目2 -->
+                        <div class="sport-card">
+                            <div class="sport-image" style="background-color: #a8d5e5;background-image: url('../images/tuijian/10.jpg'); background-size: cover; background-position: center;"></div>
+                            <div class="sport-info">
+                                <h4 class="sport-name">“清晨唤醒跑”</h4>
+                                <p>迎接早晨的新鲜空气</p>
+                            </div>
+                        </div>
+                        
+                        <!-- 运动项目3 -->
+                        <div class="sport-card">
+                            <div class="sport-image" style="background-color: #a8d5e5;background-image: url('../images/tuijian/11.jpg'); background-size: cover; background-position: center;"></div>
+                            <div class="sport-info">
+                                <h4 class="sport-name">“傍晚放松跑”</h4>
+                                <p>随着朝霞运动</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // 轮播图功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const carousel = document.querySelector('.carousel');
+            const items = document.querySelectorAll('.carousel-item');
+            const thumbnails = document.querySelectorAll('.thumbnail');
+            const totalItems = items.length;
+            let currentIndex = 0;
+            let interval;
+            
+            // 切换到指定索引的图片
+            function goToSlide(index) {
+                currentIndex = index;
+                carousel.style.transform = `translateX(-${currentIndex * 100}%)`;
+                
+                // 更新缩略图激活状态
+                thumbnails.forEach((thumb, i) => {
+                    if (i === currentIndex) {
+                        thumb.classList.add('active');
+                    } else {
+                        thumb.classList.remove('active');
+                    }
+                });
+                
+                // 重置自动轮播
+                resetInterval();
+            }
+            
+            // 重置自动轮播计时器
+            function resetInterval() {
+                clearInterval(interval);
+                interval = setInterval(() => {
+                    currentIndex = (currentIndex + 1) % totalItems;
+                    goToSlide(currentIndex);
+                }, 4000);
+            }
+            
+            // 为缩略图添加点击事件
+            thumbnails.forEach((thumbnail, index) => {
+                thumbnail.addEventListener('click', () => {
+                    goToSlide(index);
+                });
+            });
+            
+            // 启动自动轮播
+            resetInterval();
+            
+            // 交互式地图功能
+            const mapMarkers = document.querySelectorAll('.map-marker');
+            const mapPopup = document.getElementById('map-popup');
+            const popupTitle = document.getElementById('popup-title');
+            const popupDesc = document.getElementById('popup-desc');
+            const popupLink = document.getElementById('popup-link');
+            
+            // 地点信息数据
+            const locations = [
+                {
+                    title: "西堤公园",
+                    description: "汕头最美的海滨跑步路线",
+                    link: "1.html"
+                },
+                {
+                    title: "商埠之芯 · 小公园中山纪念亭",
+                    description: "穿越骑楼的韵律，体验百载商埠的繁华，进行变速跑训练。",
+                    link: "2.html"
+                },
+                {
+                    title: "侨乡之窗 · 侨批文物馆",
+                    description: "感受'家书抵万金'的信念，通过持续慢跑培养耐力与毅力。",
+                    link: "3.html"
+                },
+                {
+                    title: "人文之光 · 汕头市博物馆",
+                    description: "汲取知识的力量，进行积极恢复跑，为最终冲刺做准备。",
+                    link: "4.html"
+                }
+            ];
+            
+            // 为地图标记点添加事件
+            mapMarkers.forEach(marker => {
+                marker.addEventListener('click', function(e) {
+                    e.stopPropagation(); // 防止事件冒泡
+                    
+                    const index = parseInt(this.getAttribute('data-index'));
+                    const location = locations[index];
+                    
+                    // 更新弹窗内容
+                    popupTitle.textContent = location.title;
+                    popupDesc.textContent = location.description;
+                    popupLink.href = location.link;
+                    
+                    // 获取标记点位置
+                    const markerRect = this.getBoundingClientRect();
+                    const containerRect = this.parentElement.getBoundingClientRect();
+                    
+                    // 计算弹窗位置 - 确保不会超出地图边界
+                    let popupTop = markerRect.top - containerRect.top - 120;
+                    let popupLeft = markerRect.left - containerRect.left - 100;
+                    
+                    // 如果弹窗顶部超出地图顶部，则显示在标记点下方
+                    if (popupTop < 10) {
+                        popupTop = markerRect.top - containerRect.top + 40;
+                    }
+                    
+                    // 如果弹窗左侧超出地图左侧，则向右调整
+                    if (popupLeft < 10) {
+                        popupLeft = 10;
+                    }
+                    
+                    // 如果弹窗右侧超出地图右侧，则向左调整
+                    const mapWidth = containerRect.width;
+                    if (popupLeft + 200 > mapWidth) {
+                        popupLeft = mapWidth - 210;
+                    }
+                    
+                    // 设置弹窗位置
+                    mapPopup.style.top = popupTop + 'px';
+                    mapPopup.style.left = popupLeft + 'px';
+                    
+                    // 显示弹窗
+                    mapPopup.style.display = 'block';
+                });
+            });
+            
+            // 点击地图其他地方关闭弹窗
+            document.querySelector('.map-container').addEventListener('click', function() {
+                mapPopup.style.display = 'none';
+            });
+            
+            // 点击弹窗内部时不关闭弹窗
+            mapPopup.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        });
+    </script>
+</body>
+</html>
