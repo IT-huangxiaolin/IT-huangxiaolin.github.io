@@ -4,7 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>运动推荐 - 汕头</title>
+    
+    <!-- 添加本地备用Leaflet CSS -->
     <style>
+        /* 如果CDN加载失败，显示备用提示 */
+        .leaflet-container {
+            background-color: #f0f8ff !important;
+        }
+    </style>
+    
+    <!-- 尝试多个Leaflet CDN源 -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin=""
+          onerror="this.onerror=null;this.href='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css';" />
+    
+    <style>
+        /* 所有原有CSS样式不变 */
         * {
             margin: 0;
             padding: 0;
@@ -21,29 +37,24 @@
         }
         
         body {
-            background-color: white; /* 主体为白色 */
-    color: var(--dark-text);
-    line-height: 1.6;
-    /* 顶部青色渐变 + 底部浅蓝色渐变 */
-    background: 
-        /* 顶部青色渐变 - 高度约10% */
-        linear-gradient(180deg, 
-            rgba(64, 224, 208, 0.8) 0%, 
-            rgba(64, 224, 208, 0.4) 50%,
-            transparent 100%
-        ),
-        /* 底部浅蓝色渐变 - 高度约10% */
-        linear-gradient(0deg, 
-            rgba(173, 216, 230, 0.8) 0%, 
-            rgba(173, 216, 230, 0.4) 50%,
-            transparent 100%
-        ),
-        /* 主体白色背景 */
-        linear-gradient(180deg, white 0%, white 100%);
-    
-    background-size: 100% 10%, 100% 10%, 100% 100%;
-    background-repeat: no-repeat;
-    background-position: top, bottom, center;
+            background-color: white;
+            color: var(--dark-text);
+            line-height: 1.6;
+            background: 
+                linear-gradient(180deg, 
+                    rgba(64, 224, 208, 0.8) 0%, 
+                    rgba(64, 224, 208, 0.4) 50%,
+                    transparent 100%
+                ),
+                linear-gradient(0deg, 
+                    rgba(173, 216, 230, 0.8) 0%, 
+                    rgba(173, 216, 230, 0.4) 50%,
+                    transparent 100%
+                ),
+                linear-gradient(180deg, white 0%, white 100%);
+            background-size: 100% 10%, 100% 10%, 100% 100%;
+            background-repeat: no-repeat;
+            background-position: top, bottom, center;
         }
         
         .container {
@@ -52,7 +63,6 @@
             padding: 0 20px;
         }
         
-        /* 定位标签 */
         .location-tag {
             position: absolute;
             top: 20px;
@@ -72,7 +82,6 @@
             color: var(--primary-blue);
         }
         
-        /* 回到主页按钮 */
         .home-btn-container {
             text-align: center;
             margin-bottom: 20px;
@@ -93,7 +102,6 @@
             background-color: var(--secondary-blue);
         }
         
-        /* 推荐区域 */
         .recommendation-section {
             padding: 80px 0 40px;
             position: relative;
@@ -115,7 +123,6 @@
             margin: 15px auto;
         }
         
-        /* 轮播图区域布局 */
         .carousel-area {
             display: flex;
             gap: 20px;
@@ -123,7 +130,6 @@
             margin: 0 auto;
         }
         
-        /* 缩略图区域 */
         .thumbnail-container {
             width: 120px;
             display: flex;
@@ -159,7 +165,6 @@
             object-fit: cover;
         }
         
-        /* 轮播图 */
         .carousel-container {
             flex: 1;
             position: relative;
@@ -200,106 +205,229 @@
             margin-bottom: 5px;
         }
         
-        /* 交互式地图区域 */
+        /* 交互式地图区域 - 确保可见 */
         .interactive-map {
             margin: 60px 0;
             padding: 30px 0;
             background-color: white;
             border-radius: 10px;
             box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+            min-height: 600px; /* 确保有最小高度 */
         }
         
+        /* 地图容器 - 确保有高度 */
         .map-container {
             position: relative;
-            max-width: 900px;
-            margin: 0 auto;
+            width: 100%;
+            height: 500px !important; /* 强制高度 */
+            min-height: 500px !important; /* 最小高度 */
             border-radius: 8px;
             overflow: hidden;
             box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            margin: 0 auto;
+            background-color: #f0f8ff; /* 备用背景色 */
         }
         
-        .map-background {
-            width: 100%;
-            height: auto;
-            display: block;
+        /* 确保地图容器有明确的定位和大小 */
+        #leaflet-map {
+            width: 100% !important;
+            height: 100% !important;
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            z-index: 1;
         }
         
-        .map-marker {
-            position: absolute;
-            width: 40px;
-            height: 40px;
+        /* 地图控制面板 */
+        .map-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0 30px 0;
+            flex-wrap: wrap;
+        }
+        
+        .map-btn {
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: bold;
+        }
+        
+        .map-btn:hover {
+            background-color: var(--secondary-blue);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .map-btn.active {
             background-color: var(--accent-gold);
+        }
+        
+        /* 定位按钮 */
+        .locate-btn {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background-color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.2);
+            cursor: pointer;
+            z-index: 1000;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            transform: translate(-50%, -50%);
-            transition: all 0.3s ease;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.3);
-            z-index: 5;
+            font-size: 1.5rem;
+            transition: all 0.3s;
         }
         
-        .map-marker:hover {
-            transform: translate(-50%, -50%) scale(1.2);
-            background-color: var(--primary-blue);
+        .locate-btn:hover {
+            background-color: var(--light-bg);
+            transform: scale(1.2);
         }
         
-        .map-marker::after {
-            content: "";
+        /* 图层控制 */
+        .layer-control {
             position: absolute;
-            width: 0;
-            height: 0;
-            border-left: 10px solid transparent;
-            border-right: 10px solid transparent;
-            border-top: 15px solid var(--accent-gold);
-            bottom: -12px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        
-        .map-marker:hover::after {
-            border-top-color: var(--primary-blue);
-        }
-        
-        .map-popup {
-            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
             background-color: white;
-            padding: 15px;
+            padding: 10px;
             border-radius: 8px;
-            box-shadow: 0 3px 15px rgba(0,0,0,0.2);
-            width: 200px;
-            z-index: 20;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+        
+        .layer-control select {
+            background-color: white;
+            border: 2px solid var(--primary-blue);
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 0.95rem;
+            color: var(--dark-text);
+            min-width: 140px;
+        }
+        
+        /* 路线信息 */
+        .route-info {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 25px auto 0;
+            max-width: 900px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.1);
             display: none;
+            border-left: 5px solid var(--accent-gold);
         }
         
-        .map-popup h4 {
-            color: var(--primary-blue);
-            margin-bottom: 5px;
+        .route-info.show {
+            display: block;
         }
         
-        .map-popup p {
-            font-size: 0.9rem;
-            margin-bottom: 10px;
+        /* 加载动画和错误提示 */
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            background-color: rgba(255,255,255,0.95);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-width: 250px;
         }
         
-        .map-popup a {
-            display: inline-block;
+        .loading.show {
+            display: flex;
+        }
+        
+        .error-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+            text-align: center;
+            display: none;
+            border: 2px solid #ff6b6b;
+            max-width: 500px;
+        }
+        
+        .error-message.show {
+            display: block;
+        }
+        
+        .spinner {
+            border: 5px solid rgba(0,0,0,0.1);
+            border-top: 5px solid var(--primary-blue);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .retry-btn {
             background-color: var(--primary-blue);
             color: white;
-            padding: 5px 10px;
-            border-radius: 4px;
-            text-decoration: none;
-            font-size: 0.8rem;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 15px;
+            transition: background-color 0.3s;
         }
         
-        .map-popup a:hover {
+        .retry-btn:hover {
             background-color: var(--secondary-blue);
         }
         
-        /* 运动分类区域 */
+        /* 调试面板 */
+        .debug-panel {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            background-color: rgba(0,0,0,0.8);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            z-index: 9999;
+            display: none;
+        }
+        
+        .debug-panel.show {
+            display: block;
+        }
+        
+        /* 运动分类区域保持不变 */
         .sports-categories {
             display: flex;
             gap: 30px;
@@ -396,19 +524,56 @@
                 height: 60px;
             }
             
-            .map-marker {
-                width: 30px;
-                height: 30px;
-                font-size: 0.8rem;
+            .map-container {
+                height: 400px !important;
+                min-height: 400px !important;
             }
             
-            .map-popup {
-                width: 160px;
+            .map-controls {
+                gap: 10px;
+            }
+            
+            .map-btn {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
+            
+            .layer-control {
+                top: 10px;
+                right: 10px;
+                padding: 8px;
+            }
+            
+            .layer-control select {
+                padding: 6px 12px;
+                font-size: 0.9rem;
+                min-width: 120px;
+            }
+            
+            .locate-btn {
+                width: 45px;
+                height: 45px;
+                bottom: 15px;
+                right: 15px;
             }
         }
     </style>
+    
+    <!-- 多个Leaflet CDN源，如果第一个失败尝试第二个 -->
+    <link rel="stylesheet" 
+          href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.css"
+          onerror="loadBackupCSS()" />
+    
 </head>
 <body>
+    <!-- 调试面板 -->
+    <div class="debug-panel" id="debug-panel">
+        <div>地图状态: <span id="map-status">初始化中...</span></div>
+        <div>坐标: <span id="coords-display">-</span></div>
+        <div>缩放: <span id="zoom-display">-</span></div>
+        <button onclick="toggleDebug()" style="margin-top:5px;padding:3px 8px;font-size:0.7rem;">隐藏调试</button>
+    </div>
+
     <!-- 运动推荐页面 -->
     <section class="recommendation-section">
         <div class="container">
@@ -419,7 +584,7 @@
             
             <!-- 回到主页按钮 -->
             <div class="home-btn-container">
-                <a href="../index.html" class="home-btn">回到主页</a>
+                <a href="../城市跃动跑文脉，体育融科焕新篇.html" class="home-btn">回到主页</a>
             </div>
             
             <h2 class="section-title">推荐运动景点</h2>
@@ -502,84 +667,125 @@
             <!-- 交互式地图区域 -->
             <div class="interactive-map">
                 <h3 class="section-title">运动地点地图</h3>
+                
+                <!-- 地图控制面板 -->
+                <div class="map-controls">
+                    <button class="map-btn" id="walking-route">
+                        <span>🚶</span>步行路线
+                    </button>
+                    <button class="map-btn" id="cycling-route">
+                        <span>🚴</span>骑行路线
+                    </button>
+                    <button class="map-btn" id="reset-view">
+                        <span>🗺️</span>重置视图
+                    </button>
+                    <button class="map-btn" id="test-markers">
+                        <span>📍</span>测试标记
+                    </button>
+                </div>
+                
+                <!-- 地图容器 -->
                 <div class="map-container">
-                    <img src="../images/map-background.jpg" alt="汕头运动地点地图" class="map-background">
-                  <div class="map-marker" style="left: 75%; top: 45%;" data-index="3"> 人 </div>
-<!-- 地图标记点1 - 西堤公园 -->
-                    <div class="map-marker" style="left: 25%; top: 40%;" data-index="0">
-                        西
+                    <!-- 地图将在这里显示 -->
+                    <div id="leaflet-map"></div>
+                    
+                    <!-- 图层控制 -->
+                    <div class="layer-control">
+                        <select id="map-layer">
+                            <option value="osm">标准地图</option>
+                            <option value="osm-hot">街道详图</option>
+                            <option value="carto-light">简洁地图</option>
+                            <option value="carto-dark">深色地图</option>
+                            <option value="local-tiles">本地瓦片</option>
+                        </select>
                     </div>
                     
-                    <!-- 地图标记点2 - 商埠之芯 -->
-                    <div class="map-marker" style="left: 45%; top: 35%;" data-index="1">
-                        商
+                    <!-- 定位按钮 -->
+                    <button class="locate-btn" id="locate-me" title="定位我的位置">
+                        📍
+                    </button>
+                    
+                    <!-- 加载动画 -->
+                    <div class="loading" id="map-loading">
+                        <div class="spinner"></div>
+                        <p>正在加载地图...</p>
+                        <p style="font-size:0.9rem;color:#666;margin-top:10px;">如果长时间未加载，请检查网络</p>
                     </div>
                     
-                    <!-- 地图标记点3 - 侨乡之窗 -->
-                    <div class="map-marker" style="left: 60%; top: 50%;" data-index="2">
-                        侨
+                    <!-- 错误提示 -->
+                    <div class="error-message" id="map-error">
+                        <h3 style="color:#ff6b6b;">❌ 地图加载失败</h3>
+                        <p>可能的原因：</p>
+                        <ul style="text-align:left;margin:15px 0;">
+                            <li>网络连接问题</li>
+                            <li>浏览器阻止了地图资源</li>
+                            <li>OpenStreetMap服务暂时不可用</li>
+                        </ul>
+                        <p>尝试以下解决方案：</p>
+                        <button class="retry-btn" onclick="retryMapLoad()">重试加载</button>
+                        <button class="retry-btn" onclick="useLocalTiles()" style="margin-left:10px;">使用本地瓦片</button>
+                        <p style="margin-top:15px;font-size:0.9rem;color:#666;">
+                            如果问题持续，请按F12打开控制台查看错误信息
+                        </p>
                     </div>
-                    
-                    <!-- 地图标记点4 - 人文之光 -->
-                    
-                    <!-- 地图弹窗 -->
-                    <div class="map-popup" id="map-popup">
-                        <h4 id="popup-title">地点名称</h4>
-                        <p id="popup-desc">地点描述</p>
-                        <a href="#" id="popup-link">查看详情</a>
-                  </div>
+                </div>
+                
+                <!-- 路线信息 -->
+                <div class="route-info" id="route-info">
+                    <h4><span>🗺️</span> 地图信息</h4>
+                    <p>当前显示汕头市运动地点地图，点击标记查看详细信息。</p>
+                    <div class="route-details" style="display:flex;gap:15px;margin-top:10px;">
+                        <div style="display:flex;align-items:center;gap:5px;">
+                            <span>📍</span>
+                            <span id="marker-count">4个运动地点</span>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:5px;">
+                            <span>🗺️</span>
+                            <span>缩放: <span id="current-zoom">13</span></span>
+                        </div>
+                    </div>
                 </div>
             </div>
             
-            <!-- 运动分类 -->
+            <!-- 运动分类区域 -->
             <div class="sports-categories">
-                <!-- 特色运动 -->
                 <div class="featured-sports">
                     <h3 class="category-title">特色运动</h3>
                     <div class="sports-grid">
-                        <!-- 运动项目1 -->
                         <div class="sport-card">
                             <div class="sport-image" style="background-color: #a8d5e5;background-image: url('../images/tuijian/5.jpg'); background-size: cover; background-position: center;"></div>
                             <div class="sport-info">
-                                <h4 class="sport-name">“潮汐呼吸法”</h4>
-                                <p> “潮起（吸气）- 潮落（呼气）”</p>
+                                <h4 class="sport-name">"潮汐呼吸法"</h4>
+                                <p>"潮起（吸气）- 潮落（呼气）"</p>
                             </div>
                         </div>
-                        
-                        <!-- 运动项目2 -->
                         <div class="sport-card">
                             <div class="sport-image" style="background-color: #a8d5e5;background-image: url('../images/tuijian/6.jpg'); background-size: cover; background-position: center;"></div>
                             <div class="sport-info">
-                                <h4 class="sport-name">“岩阶踏法”</h4>
+                                <h4 class="sport-name">"岩阶踏法"</h4>
                                 <p>礐石山地貌，设计全脚掌着地、小步幅攀升的登山技巧</p>
                             </div>
                         </div>
-                        
-                        <!-- 运动项目3 -->
                         <div class="sport-card">
                             <div class="sport-image" style="background-color: #a8d5e5;background-image: url('../images/tuijian/7.jpg'); background-size: cover; background-position: center;"></div>
                             <div class="sport-info">
-                                <h4 class="sport-name">“骑楼步频调节法”</h4>
+                                <h4 class="sport-name">"骑楼步频调节法"</h4>
                                 <p>调整漫步步频以适配街区景观节奏</p>
                             </div>
                         </div>
-                        
-                        <!-- 运动项目4 -->
                         <div class="sport-card">
                             <div class="sport-image" style="background-color: #a8d5e5;background-image: url('../images/tuijian/8.png'); background-size: cover; background-position: center;"></div>
                             <div class="sport-info">
-                                <h4 class="sport-name">“侨批节奏跑”</h4>
+                                <h4 class="sport-name">"侨批节奏跑"</h4>
                                 <p>模拟侨胞往来脉络，设计快慢交替的间歇跑模式</p>
                             </div>
                         </div>
                     </div>
                 </div>
                 
-                <!-- 常规运动 -->
                 <div class="regular-sports">
                     <h3 class="category-title">常规运动</h3>
                     <div class="sports-grid">
-                        <!-- 运动项目1 -->
                         <div class="sport-card">
                             <div class="sport-image" style="background-color: #a8d5e5;background-image: url('../images/tuijian/9.jpg'); background-size: cover; background-position: center;"></div>
                             <div class="sport-info">
@@ -587,21 +793,17 @@
                                 <p>社区篮球场活动</p>
                             </div>
                         </div>
-                        
-                        <!-- 运动项目2 -->
                         <div class="sport-card">
                             <div class="sport-image" style="background-color: #a8d5e5;background-image: url('../images/tuijian/10.jpg'); background-size: cover; background-position: center;"></div>
                             <div class="sport-info">
-                                <h4 class="sport-name">“清晨唤醒跑”</h4>
+                                <h4 class="sport-name">"清晨唤醒跑"</h4>
                                 <p>迎接早晨的新鲜空气</p>
                             </div>
                         </div>
-                        
-                        <!-- 运动项目3 -->
                         <div class="sport-card">
                             <div class="sport-image" style="background-color: #a8d5e5;background-image: url('../images/tuijian/11.jpg'); background-size: cover; background-position: center;"></div>
                             <div class="sport-info">
-                                <h4 class="sport-name">“傍晚放松跑”</h4>
+                                <h4 class="sport-name">"傍晚放松跑"</h4>
                                 <p>随着朝霞运动</p>
                             </div>
                         </div>
@@ -611,9 +813,58 @@
         </div>
     </section>
 
+    <!-- 尝试多个Leaflet JS CDN源 -->
     <script>
-        // 轮播图功能
-        document.addEventListener('DOMContentLoaded', function() {
+        // 备用CSS加载函数
+        function loadBackupCSS() {
+            console.log('主CSS加载失败，尝试备用CDN...');
+            var link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css';
+            document.head.appendChild(link);
+        }
+        
+        // 加载Leaflet JS
+        function loadLeaflet() {
+            var script = document.createElement('script');
+            script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+            script.integrity = 'sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=';
+            script.crossOrigin = '';
+            script.onerror = function() {
+                console.log('主Leaflet JS加载失败，尝试备用CDN...');
+                var backupScript = document.createElement('script');
+                backupScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';
+                backupScript.onload = initApplication;
+                backupScript.onerror = function() {
+                    console.error('所有Leaflet CDN都失败了');
+                    document.getElementById('map-error').classList.add('show');
+                };
+                document.head.appendChild(backupScript);
+            };
+            script.onload = initApplication;
+            document.head.appendChild(script);
+        }
+        
+        // 初始化应用
+        function initApplication() {
+            console.log('Leaflet加载成功，版本:', L.version);
+            document.addEventListener('DOMContentLoaded', main);
+        }
+        
+        // 启动加载
+        loadLeaflet();
+    </script>
+    
+    <script>
+        // 主要应用逻辑
+        function main() {
+            console.log('应用程序初始化开始...');
+            
+            // 显示调试面板
+            document.getElementById('debug-panel').classList.add('show');
+            document.getElementById('map-status').textContent = '初始化中...';
+            
+            // 轮播图功能（保持原样）
             const carousel = document.querySelector('.carousel');
             const items = document.querySelectorAll('.carousel-item');
             const thumbnails = document.querySelectorAll('.thumbnail');
@@ -621,12 +872,10 @@
             let currentIndex = 0;
             let interval;
             
-            // 切换到指定索引的图片
             function goToSlide(index) {
                 currentIndex = index;
                 carousel.style.transform = `translateX(-${currentIndex * 100}%)`;
                 
-                // 更新缩略图激活状态
                 thumbnails.forEach((thumb, i) => {
                     if (i === currentIndex) {
                         thumb.classList.add('active');
@@ -635,11 +884,9 @@
                     }
                 });
                 
-                // 重置自动轮播
                 resetInterval();
             }
             
-            // 重置自动轮播计时器
             function resetInterval() {
                 clearInterval(interval);
                 interval = setInterval(() => {
@@ -648,103 +895,449 @@
                 }, 4000);
             }
             
-            // 为缩略图添加点击事件
             thumbnails.forEach((thumbnail, index) => {
                 thumbnail.addEventListener('click', () => {
                     goToSlide(index);
                 });
             });
             
-            // 启动自动轮播
             resetInterval();
-            
-            // 交互式地图功能
-            const mapMarkers = document.querySelectorAll('.map-marker');
-            const mapPopup = document.getElementById('map-popup');
-            const popupTitle = document.getElementById('popup-title');
-            const popupDesc = document.getElementById('popup-desc');
-            const popupLink = document.getElementById('popup-link');
             
             // 地点信息数据
             const locations = [
                 {
+                    id: 1,
+                    title: "礐石山风景区",
+                    description: "位于汕头市濠江区的国家4A级旅游景区",
+                    link: "1.html",
+                    lat: 23.275,
+                    lng: 116.732,
+                    markerText: "礐",
+                    color: "#2ecc71"
+                },
+                {
+                    id: 2,
+                    title: "商埠之芯·小公园中山纪念亭",
+                    description: "穿越骑楼的韵律，体验百载商埠的繁华",
+                    link: "2.html",
+                    lat: 23.356,
+                    lng: 116.682,
+                    markerText: "商",
+                    color: "#e74c3c"
+                },
+                {
+                    id: 3,
                     title: "西堤公园",
-                    description: "汕头最美的海滨跑步路线",
-                    link: "1.html"
+                    description: "汕头最美的海滨跑步路线，感受海风与夕阳",
+                    link: "3.html",
+                    lat: 23.367,
+                    lng: 116.665,
+                    markerText: "西",
+                    color: "#3498db"
                 },
                 {
-                    title: "商埠之芯 · 小公园中山纪念亭",
-                    description: "穿越骑楼的韵律，体验百载商埠的繁华，进行变速跑训练。",
-                    link: "2.html"
-                },
-                {
-                    title: "侨乡之窗 · 侨批文物馆",
-                    description: "感受'家书抵万金'的信念，通过持续慢跑培养耐力与毅力。",
-                    link: "3.html"
-                },
-                {
-                    title: "人文之光 · 汕头市博物馆",
-                    description: "汲取知识的力量，进行积极恢复跑，为最终冲刺做准备。",
-                    link: "4.html"
+                    id: 4,
+                    title: "汕头市第一中学",
+                    description: "青春校园活力站点，在日常的生活中体验锻炼",
+                    link: "4.html",
+                    lat: 23.352,
+                    lng: 116.697,
+                    markerText: "人",
+                    color: "#9b59b6"
                 }
             ];
             
-            // 为地图标记点添加事件
-            mapMarkers.forEach(marker => {
-                marker.addEventListener('click', function(e) {
-                    e.stopPropagation(); // 防止事件冒泡
+            // Leaflet地图相关变量
+            let map = null;
+            let markers = [];
+            
+            // 地图图层定义 - 使用国内可访问的源
+            const baseLayers = {
+                "标准地图": L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                    maxZoom: 19
+                }),
+                "街道详图": L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors, Tiles style by Humanitarian OpenStreetMap Team',
+                    maxZoom: 19
+                }),
+                "简洁地图": L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                    attribution: '© OpenStreetMap, © CartoDB',
+                    maxZoom: 20
+                }),
+                "深色地图": L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                    attribution: '© OpenStreetMap, © CartoDB',
+                    maxZoom: 20
+                }),
+                "本地瓦片": L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png', {
+                    attribution: '© OpenStreetMap contributors',
+                    maxZoom: 20
+                })
+            };
+            
+            // 初始化Leaflet地图
+            function initMap() {
+                console.log('开始初始化地图...');
+                document.getElementById('map-status').textContent = '创建地图实例';
+                
+                try {
+                    // 创建地图实例，中心点为汕头
+                    map = L.map('leaflet-map', {
+                        center: [23.354, 116.682], // 汕头中心坐标 [纬度, 经度]
+                        zoom: 13,
+                        zoomControl: true,
+                        dragging: true,
+                        scrollWheelZoom: true,
+                        doubleClickZoom: true,
+                        boxZoom: true,
+                        keyboard: true,
+                        tap: true,
+                        touchZoom: true
+                    });
                     
-                    const index = parseInt(this.getAttribute('data-index'));
-                    const location = locations[index];
+                    console.log('地图实例创建成功');
+                    document.getElementById('map-status').textContent = '添加地图图层';
                     
-                    // 更新弹窗内容
-                    popupTitle.textContent = location.title;
-                    popupDesc.textContent = location.description;
-                    popupLink.href = location.link;
+                    // 添加默认图层 - 使用简洁地图作为默认（国内访问更稳定）
+                    baseLayers["简洁地图"].addTo(map);
                     
-                    // 获取标记点位置
-                    const markerRect = this.getBoundingClientRect();
-                    const containerRect = this.parentElement.getBoundingClientRect();
+                    // 添加其他图层控制
+                    L.control.layers(baseLayers).addTo(map);
                     
-                    // 计算弹窗位置 - 确保不会超出地图边界
-                    let popupTop = markerRect.top - containerRect.top - 120;
-                    let popupLeft = markerRect.left - containerRect.left - 100;
+                    // 添加缩放控件
+                    L.control.zoom({
+                        position: 'topright'
+                    }).addTo(map);
                     
-                    // 如果弹窗顶部超出地图顶部，则显示在标记点下方
-                    if (popupTop < 10) {
-                        popupTop = markerRect.top - containerRect.top + 40;
-                    }
+                    // 监听地图事件
+                    map.on('load', function() {
+                        console.log('地图加载完成');
+                        document.getElementById('map-status').textContent = '地图加载完成';
+                        document.getElementById('map-loading').classList.remove('show');
+                        document.getElementById('route-info').classList.add('show');
+                        
+                        // 添加地点标记
+                        addLocationMarkers();
+                    });
                     
-                    // 如果弹窗左侧超出地图左侧，则向右调整
-                    if (popupLeft < 10) {
-                        popupLeft = 10;
-                    }
+                    map.on('zoomend', function() {
+                        document.getElementById('current-zoom').textContent = map.getZoom();
+                        document.getElementById('zoom-display').textContent = map.getZoom();
+                    });
                     
-                    // 如果弹窗右侧超出地图右侧，则向左调整
-                    const mapWidth = containerRect.width;
-                    if (popupLeft + 200 > mapWidth) {
-                        popupLeft = mapWidth - 210;
-                    }
+                    map.on('moveend', function() {
+                        const center = map.getCenter();
+                        document.getElementById('coords-display').textContent = 
+                            center.lat.toFixed(4) + ', ' + center.lng.toFixed(4);
+                    });
                     
-                    // 设置弹窗位置
-                    mapPopup.style.top = popupTop + 'px';
-                    mapPopup.style.left = popupLeft + 'px';
+                    // 设置初始调试信息
+                    document.getElementById('coords-display').textContent = '23.3540, 116.6820';
+                    document.getElementById('zoom-display').textContent = '13';
                     
-                    // 显示弹窗
-                    mapPopup.style.display = 'block';
+                    // 隐藏加载动画（如果地图加载很快）
+                    setTimeout(function() {
+                        if (document.getElementById('map-loading').classList.contains('show')) {
+                            console.log('地图加载超时，尝试显示错误信息');
+                            document.getElementById('map-loading').classList.remove('show');
+                            document.getElementById('map-error').classList.add('show');
+                        }
+                    }, 10000); // 10秒超时
+                    
+                } catch (error) {
+                    console.error('地图初始化失败:', error);
+                    document.getElementById('map-status').textContent = '初始化失败: ' + error.message;
+                    document.getElementById('map-loading').classList.remove('show');
+                    document.getElementById('map-error').classList.add('show');
+                }
+            }
+            
+            // 创建自定义图标
+            function createCustomIcon(markerText, color) {
+                return L.divIcon({
+                    html: `<div style="
+                        background-color: ${color};
+                        color: white;
+                        width: 40px;
+                        height: 40px;
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-weight: bold;
+                        font-size: 18px;
+                        border: 3px solid white;
+                        box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+                        cursor: pointer;
+                    ">${markerText}</div>`,
+                    className: 'custom-marker-icon',
+                    iconSize: [40, 40],
+                    iconAnchor: [20, 20]
                 });
+            }
+            
+            // 添加地点标记
+            function addLocationMarkers() {
+                console.log('开始添加标记...');
+                document.getElementById('map-status').textContent = '添加地点标记';
+                
+                locations.forEach(location => {
+                    try {
+                        // 创建自定义图标
+                        const icon = createCustomIcon(location.markerText, location.color);
+                        
+                        // 创建标记
+                        const marker = L.marker([location.lat, location.lng], { 
+                            icon: icon,
+                            title: location.title
+                        }).addTo(map);
+                        
+                        // 创建弹窗内容
+                        const popupContent = `
+                            <div style="max-width: 280px; padding: 5px;">
+                                <h3 style="color: var(--primary-blue); margin: 0 0 10px 0; font-size: 1.1rem;">
+                                    ${location.title}
+                                </h3>
+                                <p style="margin: 0 0 10px 0; color: #666; font-size: 0.95rem;">
+                                    ${location.description}
+                                </p>
+                                <div style="font-size: 0.85rem; color: #888; margin-bottom: 12px; background: #f5f5f5; padding: 5px; border-radius: 3px;">
+                                    坐标: ${location.lat.toFixed(6)}, ${location.lng.toFixed(6)}
+                                </div>
+                                <a href="${location.link}" style="
+                                    display: inline-block;
+                                    background-color: var(--primary-blue);
+                                    color: white;
+                                    padding: 8px 15px;
+                                    border-radius: 4px;
+                                    text-decoration: none;
+                                    font-size: 0.9rem;
+                                    transition: background-color 0.3s;
+                                " onmouseover="this.style.backgroundColor='var(--secondary-blue)'" 
+                                   onmouseout="this.style.backgroundColor='var(--primary-blue)'">
+                                    查看详情
+                                </a>
+                            </div>
+                        `;
+                        
+                        // 绑定弹窗
+                        marker.bindPopup(popupContent, {
+                            maxWidth: 300,
+                            className: 'custom-popup'
+                        });
+                        
+                        // 添加到标记数组
+                        markers.push(marker);
+                        
+                        // 添加点击事件
+                        marker.on('click', function(e) {
+                            marker.openPopup();
+                            map.panTo(e.latlng);
+                        });
+                        
+                        console.log('添加标记:', location.title);
+                    } catch (error) {
+                        console.error('添加标记失败:', location.title, error);
+                    }
+                });
+                
+                document.getElementById('map-status').textContent = '就绪';
+                document.getElementById('marker-count').textContent = markers.length + '个运动地点';
+                console.log('标记添加完成，共', markers.length, '个标记');
+            }
+            
+            // 获取用户当前位置
+            function locateUser() {
+                if (!navigator.geolocation) {
+                    alert('您的浏览器不支持地理位置功能');
+                    return;
+                }
+                
+                document.getElementById('map-status').textContent = '获取位置中...';
+                
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        const userLat = position.coords.latitude;
+                        const userLng = position.coords.longitude;
+                        
+                        // 创建用户位置标记
+                        const userIcon = L.divIcon({
+                            html: '<div style="background-color: #1a6fb0; color: white; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid white; box-shadow: 0 3px 15px rgba(0,0,0,0.3);">📍</div>',
+                            iconSize: [45, 45],
+                            iconAnchor: [22, 22]
+                        });
+                        
+                        const userMarker = L.marker([userLat, userLng], {
+                            icon: userIcon,
+                            zIndexOffset: 1000
+                        }).addTo(map)
+                        .bindPopup('您的位置<br>坐标: ' + userLat.toFixed(6) + ', ' + userLng.toFixed(6))
+                        .openPopup();
+                        
+                        // 平滑移动到用户位置
+                        map.flyTo([userLat, userLng], 15);
+                        
+                        document.getElementById('map-status').textContent = '已定位到您的位置';
+                        
+                        // 5秒后移除标记
+                        setTimeout(() => {
+                            map.removeLayer(userMarker);
+                        }, 5000);
+                    },
+                    function(error) {
+                        console.error('获取位置失败:', error);
+                        let message = '无法获取您的位置';
+                        switch(error.code) {
+                            case error.PERMISSION_DENIED:
+                                message = '位置服务被拒绝，请允许位置访问';
+                                break;
+                            case error.POSITION_UNAVAILABLE:
+                                message = '位置信息不可用';
+                                break;
+                            case error.TIMEOUT:
+                                message = '获取位置超时';
+                                break;
+                        }
+                        alert(message);
+                        document.getElementById('map-status').textContent = '定位失败';
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 0
+                    }
+                );
+            }
+            
+            // 重置地图视图
+            function resetView() {
+                map.setView([23.354, 116.682], 13);
+                document.getElementById('map-status').textContent = '已重置视图';
+            }
+            
+            // 测试标记功能
+            function testMarkers() {
+                // 移除所有现有标记
+                markers.forEach(marker => {
+                    map.removeLayer(marker);
+                });
+                markers = [];
+                
+                // 重新添加标记
+                addLocationMarkers();
+                
+                // 打开第一个标记的弹窗
+                if (markers.length > 0) {
+                    markers[0].openPopup();
+                    map.panTo(markers[0].getLatLng());
+                }
+                
+                document.getElementById('map-status').textContent = '测试标记完成';
+            }
+            
+            // 重试地图加载
+            function retryMapLoad() {
+                document.getElementById('map-error').classList.remove('show');
+                document.getElementById('map-loading').classList.add('show');
+                document.getElementById('map-status').textContent = '重试加载...';
+                
+                // 清空地图容器
+                document.getElementById('leaflet-map').innerHTML = '';
+                
+                // 重新初始化地图
+                setTimeout(initMap, 500);
+            }
+            
+            // 使用本地瓦片
+            function useLocalTiles() {
+                if (map) {
+                    map.eachLayer(function(layer) {
+                        if (layer instanceof L.TileLayer) {
+                            map.removeLayer(layer);
+                        }
+                    });
+                    
+                    // 添加本地瓦片图层
+                    baseLayers["本地瓦片"].addTo(map);
+                    document.getElementById('map-layer').value = 'local-tiles';
+                    document.getElementById('map-error').classList.remove('show');
+                    document.getElementById('map-status').textContent = '已切换到本地瓦片';
+                }
+            }
+            
+            // 切换调试面板
+            function toggleDebug() {
+                const panel = document.getElementById('debug-panel');
+                panel.classList.toggle('show');
+            }
+            
+            // 事件绑定
+            document.getElementById('walking-route').addEventListener('click', function() {
+                this.classList.add('active');
+                document.getElementById('cycling-route').classList.remove('active');
+                alert('步行路线规划功能正在开发中...');
             });
             
-            // 点击地图其他地方关闭弹窗
-            document.querySelector('.map-container').addEventListener('click', function() {
-                mapPopup.style.display = 'none';
+            document.getElementById('cycling-route').addEventListener('click', function() {
+                this.classList.add('active');
+                document.getElementById('walking-route').classList.remove('active');
+                alert('骑行路线规划功能正在开发中...');
             });
             
-            // 点击弹窗内部时不关闭弹窗
-            mapPopup.addEventListener('click', function(e) {
-                e.stopPropagation();
+            document.getElementById('reset-view').addEventListener('click', resetView);
+            document.getElementById('test-markers').addEventListener('click', testMarkers);
+            document.getElementById('locate-me').addEventListener('click', locateUser);
+            
+            document.getElementById('map-layer').addEventListener('change', function() {
+                const layerNames = {
+                    'osm': '标准地图',
+                    'osm-hot': '街道详图',
+                    'carto-light': '简洁地图',
+                    'carto-dark': '深色地图',
+                    'local-tiles': '本地瓦片'
+                };
+                
+                const selectedLayer = layerNames[this.value];
+                if (selectedLayer && baseLayers[selectedLayer]) {
+                    // 移除所有瓦片图层
+                    map.eachLayer(function(layer) {
+                        if (layer instanceof L.TileLayer) {
+                            map.removeLayer(layer);
+                        }
+                    });
+                    
+                    // 添加选中的图层
+                    baseLayers[selectedLayer].addTo(map);
+                    document.getElementById('map-status').textContent = '已切换到: ' + selectedLayer;
+                }
             });
-        });
+            
+            // 显示调试信息
+            console.log('开始初始化地图...');
+            document.getElementById('map-loading').classList.add('show');
+            
+            // 延迟初始化地图，确保DOM完全加载
+            setTimeout(initMap, 100);
+        }
+        
+        // 全局函数供HTML按钮调用
+        window.retryMapLoad = function() {
+            if (typeof retryMapLoad === 'function') {
+                retryMapLoad();
+            }
+        };
+        
+        window.useLocalTiles = function() {
+            if (typeof useLocalTiles === 'function') {
+                useLocalTiles();
+            }
+        };
+        
+        window.toggleDebug = function() {
+            if (typeof toggleDebug === 'function') {
+                toggleDebug();
+            }
+        };
     </script>
 </body>
 </html>
